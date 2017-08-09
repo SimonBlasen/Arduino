@@ -1,10 +1,3 @@
-
-#include <Adafruit_NeoPixel.h>
-#ifdef __AVR__
-  #include <avr/power.h>
-#endif
-
-
 typedef struct {
     double r;       // a fraction between 0 and 1
     double g;       // a fraction between 0 and 1
@@ -121,61 +114,4 @@ rgb hsv2rgb(hsv in)
         break;
     }
     return out;     
-}
-
-#define PIN            6
-#define NUMPIXELS      60
- 
-Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
-
-void led(int pos, rgb color)
-{
-      pixels.setPixelColor(pos, pixels.Color((int)(color.r * 255.0), (int)(color.g * 255.0), (int)(color.b * 255.0)));
-}
- 
-void setup() {
-  pixels.begin();
-  for (int i = 0; i < 60; i++)
-    pixels.setPixelColor(i, pixels.Color(0,0,0)); // Moderately bright black color.
-
-  pixels.show();
-}
-
-
-int delayval = 10;
-int x = 0;
-int length = 20;
-double v = 0;
-
-void loop() {
-    hsv colorInHsv;
-    colorInHsv.s = 1.0;
-    colorInHsv.v = v / 19;
-    colorInHsv.h = x % 360;
-    
-    rgb colorInRgb = hsv2rgb(colorInHsv);
-
-    if (x > length - 1)
-    {
-      hsv colorOutHsv;
-      colorOutHsv.s = 1.0;
-      colorOutHsv.v = (19 - v) / 19;
-      colorOutHsv.h = (x - length) % 360;
-      
-      rgb colorOutRgb = hsv2rgb(colorOutHsv);
-
-      led((x - length) % 60, colorOutRgb);
-    }
-    
-    led(x % 60, colorInRgb);
-    
-    pixels.show();
-    delay(delayval);
-
-    v++;
-    if (v >= 20)
-    {
-      v = 0;
-      x++;
-    }
 }

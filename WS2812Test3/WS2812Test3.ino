@@ -8,7 +8,7 @@
  
 #define PIN            6
 #define NUMPIXELS      60
-#define NUMMOVERS      3
+#define NUMMOVERS      5
 #define COLOR_R        255
 #define COLOR_G        255
 #define COLOR_B        255
@@ -21,9 +21,9 @@ Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ80
 int delayval = 10;
 bool on = false;
 
-byte reds[] = {255, 0, 0};
-byte greens[] = {255, 0, 255};
-byte blues[] = {255, 255, 0};
+byte reds[] = {255, 0, 0, 255, 255};
+byte greens[] = {255, 0, 255, 0, 0};
+byte blues[] = {255, 255, 0, 0, 255};
 
 Mover **movers = new Mover*[NUMMOVERS];
 
