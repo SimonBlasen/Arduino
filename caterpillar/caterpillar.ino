@@ -24,14 +24,14 @@ void setup() {
 }
 
 
-const int delayval = 200;
+const int delayval = 90;
 const int length_max = 10;
 const int length_min = 3;
 
 const int steps = length_max - length_min;
 const double interval = 0.9 / (double)steps;
 
-const rgb color{1,1,0};
+const rgb color{0.1,0.2,0.9};
 
 int x = 0;
 int current_length = length_min;
