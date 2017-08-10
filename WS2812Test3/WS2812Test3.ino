@@ -22,8 +22,8 @@ int delayval = 10;
 bool on = false;
 
 byte reds[] = {255, 0, 0, 255, 255};
-byte greens[] = {255, 0, 255, 0, 0};
-byte blues[] = {255, 255, 0, 0, 255};
+byte greens[] = {255, 0, 255, 0, 255};
+byte blues[] = {255, 255, 0, 0, 0};
 
 Mover **movers = new Mover*[NUMMOVERS];
 
