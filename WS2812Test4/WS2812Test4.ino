@@ -37,7 +37,7 @@ void setup() {
 }
 
 
-const int delayval = 100;
+const int delayval = 200;
 
 const int numMovers = 3;
 Mover movers[numMovers] = {Mover({0, 1, 0}, 4, 0, 1),

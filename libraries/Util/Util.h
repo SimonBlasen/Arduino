@@ -22,6 +22,19 @@ Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ80
 const int LED_MATRIX_WIDTH = 10;
 const int LED_MATRIX_HEIGHT = 10;
 
+rgb led_get(int x, int y)
+{
+    int x1 = LED_MATRIX_WIDTH - x - 1;
+    int pos = y * LED_MATRIX_WIDTH + x1;
+    
+    uint32_t color_old = pixels.getPixelColor(pos);
+    uint8_t red = color_old >> 16;
+    uint8_t green = color_old >> 8;
+    uint8_t blue = color_old;
+    
+    return {red / 255, green / 255, blue / 255};
+}
+
 void led(int x, int y, rgb color, double intensity = 1.0)
 {
     int x1 = LED_MATRIX_WIDTH - x - 1;
