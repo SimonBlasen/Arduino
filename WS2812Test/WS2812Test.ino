@@ -4,12 +4,12 @@
   #include <avr/power.h>
 #endif
  
-#define PIN            6
+#define PIN            48
 #define NUMPIXELS      10
  
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
  
-int delayval = 10;
+int delayval = 100;
 bool on = false;
  
 void setup() {
