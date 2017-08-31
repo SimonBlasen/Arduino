@@ -1,17 +1,24 @@
 #include <Util.h>
 #include <Mover.h>
  
+#define PIN            48
+#define NUMPIXELS      100
 #define NUMMOVERS      5
 #define COLOR_R        255
 #define COLOR_G        255
 #define COLOR_B        255
 
-int delayval = 10;
+
+
+ 
+Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
+ 
+int delayval = 5;
 bool on = false;
 
-byte reds[] = {1, 0, 0, 1, 1};
-byte greens[] = {1, 0, 1, 0, 1};
-byte blues[] = {1, 1, 0, 0, 0};
+byte reds[] = {255, 0, 0, 255, 255};
+byte greens[] = {255, 0, 255, 0, 255};
+byte blues[] = {255, 255, 0, 0, 0};
 
 Mover **movers = new Mover*[NUMMOVERS];
 
@@ -33,10 +40,10 @@ void loop() {
     movers[i]->moveDistance(walkDist);
 
     movers[i]->performMove();
-
-    led(movers[i]->GetOldPos(), {0,0,0});
-
-    led(movers[i]->GetCurPos(), {reds[i],greens[i],blues[i]});
+    
+    pixels.setPixelColor(movers[i]->GetOldPos(), pixels.Color(0,0,0));
+    
+    pixels.setPixelColor(movers[i]->GetCurPos(), pixels.Color(reds[i],greens[i],blues[i]));
   }
   
   pixels.show(); // This sends the updated pixel color to the hardware.
