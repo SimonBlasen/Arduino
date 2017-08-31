@@ -54,7 +54,7 @@ void setup()
 }
 
 
-const int delayval = 200;
+const int delayval = 100;
 
 struct MoverItem
 {
@@ -83,7 +83,7 @@ void spawn()
 
 void moverReplace()
 {
-  int chance = 15;
+  int chance = 10;
   MoverItem* it = movers;
   while (it != NULL)
   {
@@ -108,7 +108,7 @@ void moverReplace()
     }
   }
   
-  if (moverCount < 6)
+  if (moverCount < 4)
   {
     if (random(10) < 10)
       spawn();

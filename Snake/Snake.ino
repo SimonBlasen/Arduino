@@ -1,8 +1,9 @@
 #include <Util.h>
 
-const int tickTime = 1000;
-const int deathTime = 3;      // ticks spent dead
-const int intelligence = 100; // chance in percent to move intelligently
+const int tickTime = 200;
+const int deathTime = 3;          // ticks spent dead
+const int randomMoveChance = 60; // chance in percent to move randomly
+const bool remoteControl = true;
 
 struct Pos
 {
@@ -11,6 +12,8 @@ struct Pos
 
 bool eaten = false;
 int deathTimer = 3;
+
+int incomingByte;
 
 struct SnakeSegment
 {
@@ -135,18 +138,54 @@ void moveRandomly()
   }
 }
 
+void com()
+{
+  if (Serial.available() > 0) {
+    // read the incoming byte:
+    incomingByte = Serial.read();
+
+    incomingByte--;
+
+    switch (direction)
+    {
+    case UP:
+      if (incomingByte != DOWN)
+        direction = incomingByte;
+      break;
+    case DOWN:
+      if (incomingByte != UP)
+        direction = incomingByte;
+      break;
+    case LEFT:
+      if (incomingByte != RIGHT)
+        direction = incomingByte;
+      break;
+    case RIGHT:
+      if (incomingByte != LEFT)
+        direction = incomingByte;
+      break;
+    }
+  }
+}
+
 void move()
 {
   grow();
 
-  // Chance 
-  if (random(100) < intelligence)
+  if (remoteControl)
   {
-    moveIntelligently();
+    com();
   }
   else
   {
-    moveRandomly();
+    if (random(100) < randomMoveChance)
+    {
+      moveRandomly();
+    }
+    else
+    {
+      moveIntelligently();
+    }
   }
 
   // move head
