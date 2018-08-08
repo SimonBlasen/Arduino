@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>430</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>Port</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QComboBox" name="comboBox">
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Speed</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QSlider" name="speed">
+      <property name="maximum">
+       <number>2000</number>
+      </property>
+      <property name="singleStep">
+       <number>20</number>
+      </property>
+      <property name="pageStep">
+       <number>200</number>
+      </property>
+      <property name="value">
+       <number>1800</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QPushButton" name="slower">
+        <property name="text">
+         <string>&lt;--</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="speedLabel">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="faster">
+        <property name="text">
+         <string>--&gt;</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="1" column="1">
+       <widget class="QPushButton" name="down">
+        <property name="text">
+         <string>DOWN</string>
+        </property>
+        <property name="shortcut">
+         <string>Down</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QPushButton" name="left">
+        <property name="text">
+         <string>LEFT</string>
+        </property>
+        <property name="shortcut">
+         <string>Left</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QPushButton" name="right">
+        <property name="text">
+         <string>RIGHT</string>
+        </property>
+        <property name="shortcut">
+         <string>Right</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="up">
+        <property name="text">
+         <string>UP</string>
+        </property>
+        <property name="shortcut">
+         <string>Up</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QTextEdit" name="textEdit"/>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>
