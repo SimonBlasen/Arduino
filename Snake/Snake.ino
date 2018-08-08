@@ -1,6 +1,7 @@
 #include <Util.h>
 
-const int tickTime = 200;
+int tickTime = 200;
+
 const int deathTime = 3;          // ticks spent dead
 const int randomMoveChance = 60; // chance in percent to move randomly
 const bool remoteControl = true;
@@ -143,8 +144,33 @@ void com()
   if (Serial.available() > 0) {
     // read the incoming byte:
     incomingByte = Serial.read();
-
     incomingByte--;
+
+    if (incomingByte == 4)
+    {
+      // set speed
+      int speed = 0;
+
+      int i = 0;
+      while (i < 4)
+      {
+        int incoming = Serial.read();
+        if (incoming == -1)
+        {
+          delay(10);
+          continue;
+        }
+
+        speed += incoming << (i * 8);
+        i++;
+      }
+
+      if (speed >= 0 && speed < 2000)
+        tickTime = speed;
+
+      Serial.println(speed);
+      return;
+    }
 
     switch (direction)
     {
