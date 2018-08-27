@@ -96,6 +96,28 @@ int counter = 0;
 
 void loop() {
   display.clearDisplay();
+
+    counter++;
+
+    //drawClock();
+    drawLCDClock(13, 5, counter % 2 == 0);
+
+
+
+    display.display();
+
+
+
+
+
+
+
+
+
+
+
+    delay(1000);
+  
   //display.setTextSize(1);
   //display.setTextColor(WHITE);
   //display.println("Hello, world!");
@@ -118,7 +140,7 @@ void loop() {
   //display.setTextColor(WHITE);
   //display.print("Oil:  "); display.print(0x86  + (counter % 12), HEX); display.println("C");
 
-  
+  /*
 
   display.setTextSize(7);
   display.setCursor(64 - 17, 16);
@@ -197,7 +219,7 @@ void loop() {
 
 counter++;
 counter = counter % 7;
-  delay(1000);
+  delay(1000);*/
 }
 
 
@@ -211,6 +233,45 @@ counter = counter % 7;
 
 
 
+void drawLCDClock(int hour, int minute, bool doublePointBlink)
+{
+    int xPos = 6;
+    int yPos = 16;
+
+    if (hour < 10)
+    {
+        xPos += 20;
+    }
+    
+  
+    display.setTextColor(WHITE);
+    display.setTextSize(4);
+    display.setCursor(xPos,yPos);
+    
+    //display.print("6");
+    if (minute < 10)
+    {
+        if (doublePointBlink)
+        {
+            display.print(String(hour) + ":0" + String(minute));
+        }
+        else
+        {
+            display.print(String(hour) + " 0" + String(minute));
+        }
+    }
+    else
+    {
+        if (doublePointBlink)
+        {
+            display.print(String(hour) + ":" + String(minute));
+        }
+        else
+        {
+            display.print(String(hour) + " " + String(minute));
+        }
+    }
+}
 
 
 
@@ -218,6 +279,45 @@ counter = counter % 7;
 
 
 
+void drawClock()
+{
+    int midX = 64;
+    int midY = 40;
+    int radius = 23;
+    int linesLengths = 5;
+  
+    display.drawCircle(midX, midY, radius, 1);
+
+    for (int i = 0; i < 12; i++)
+    {
+        float x = sin(radians(i * 30.0));
+        float y = cos(radians(i * 30.0));
+        
+        display.drawLine((int16_t)(midX + x * radius), (int16_t)(midY + y * radius), (int16_t)(midX + x * (radius - linesLengths)), (int16_t)(midY + y * (radius - linesLengths)), 1);
+    }
+}
+
+void drawClockPointers(float hour, float minute)
+{
+    int midX = 64;
+    int midY = 40;
+    int radius = 23;
+    int minuteLength = 16;
+    int hourLength = 10;
+
+
+    //hour = hour % 12;
+
+    float xHour = sin(radians(hour * 30.0));
+    float yHour = cos(radians(hour * 30.0));
+    float xMinute = sin(radians(minute * 6.0));
+    float yMinute = cos(radians(minute * 6.0));
+
+    
+    display.drawLine((int16_t)(midX), (int16_t)(midY), (int16_t)(midX + xHour * (hourLength)), (int16_t)(midY - yHour * (hourLength)), 1);
+    display.drawLine((int16_t)(midX), (int16_t)(midY), (int16_t)(midX + xMinute * (minuteLength)), (int16_t)(midY - yMinute * (minuteLength)), 1);
+    
+}
 
 
 
