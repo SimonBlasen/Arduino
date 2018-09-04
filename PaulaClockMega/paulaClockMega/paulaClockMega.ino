@@ -1,6 +1,7 @@
 #include <Wire.h>
 #include "RTClib.h"
 #include <SPI.h>
+#include <NeoPixelBus.h>
 
 
 
@@ -49,6 +50,9 @@ DS1307 rtc;
 
 
 
+const uint16_t PixelCount = 4;
+const uint8_t PixelPin = 2;
+NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> strip(PixelCount, PixelPin);
 
 
 
@@ -100,6 +104,10 @@ byte address = 0x00;
 
 
 
+// LEDs
+
+int brightnessIdle = 60;
+int brightnessIdleTop = 100;
 
 
 
@@ -163,10 +171,16 @@ Serial.println("All good with SD Card");
 
 
 
+    strip.Begin();
+    strip.Show();
 
 
+    strip.SetPixelColor(0, RgbColor(0, 0, 0));
+    strip.SetPixelColor(1, RgbColor(0, 0, 0));
+    strip.SetPixelColor(2, RgbColor(0, 0, 0));
+    strip.SetPixelColor(3, RgbColor(0, 0, 0));
 
-
+    strip.Show();
 
 
 
@@ -234,6 +248,14 @@ else
   
 }
 
+int ledMode = 0;
+int ledCounter = 0;
+
+int ledModeIntern = 0;
+int ledGlobalCounter = 0;
+
+
+
 int pressTime = 0;
 bool lift1 = true;
 bool lift2 = true;
@@ -253,7 +275,7 @@ int state = 0;
 
 // Alarm
 int alarmState = 0;
-int alarmHour = 8, alarmMinute = 0;
+int alarmHour = 19, alarmMinute = 44;
 int setAlarmState = 0;
 int displayTextEnd = 0;
 int endScreenCounter = 0;
@@ -278,6 +300,7 @@ void alarmStart()
 {
     if (alarmRinging == false)
     {
+        ledMode = 2;
         digitalWrite(42, LOW);
         alarmRinging = true;
         music.setVolume(5);  
@@ -291,6 +314,7 @@ void alarmStop()
 {
     if (alarmRinging)
     {
+        ledMode = 0;
         digitalWrite(42, HIGH);
         alarmState = 0;
         alarmRinging = false;
@@ -562,6 +586,222 @@ void loop()
 
 
 
+    if (ledMode == 0)
+    {
+        ledMode = -1;
+        ledModeIntern = 0;
+        ledGlobalCounter = 0;
+        ledCounter = 0;
+        
+        strip.SetPixelColor(0, RgbColor(0, 0, 0));
+        strip.SetPixelColor(1, RgbColor(0, 0, 0));
+        strip.SetPixelColor(2, RgbColor(0, 0, 0));
+        strip.SetPixelColor(3, RgbColor(0, 0, 0));
+        strip.Show();
+    }
+    else if (ledMode == 2)
+    {
+        ledCounter++;
+
+        int multi = 200;
+        if (ledCounter == 1)
+        {
+           strip.SetPixelColor(0, RgbColor(brightnessIdleTop, brightnessIdleTop, brightnessIdleTop));
+           strip.SetPixelColor(1, RgbColor(brightnessIdleTop, brightnessIdleTop, brightnessIdleTop));
+           strip.SetPixelColor(2, RgbColor(brightnessIdleTop, brightnessIdleTop, brightnessIdleTop));
+           strip.SetPixelColor(3, RgbColor(0, 0, 0));
+           strip.Show();
+        }
+        else if (ledCounter == 5 * multi)
+        {
+           strip.SetPixelColor(0, RgbColor(brightnessIdleTop, brightnessIdleTop, brightnessIdleTop));
+           strip.SetPixelColor(1, RgbColor(brightnessIdleTop, brightnessIdleTop, brightnessIdleTop));
+           strip.SetPixelColor(2, RgbColor(0, 0, 0));
+           strip.SetPixelColor(3, RgbColor(brightnessIdleTop, brightnessIdleTop, brightnessIdleTop));
+           strip.Show();
+        }
+        else if (ledCounter == 10 * multi)
+        {
+           strip.SetPixelColor(0, RgbColor(0, 0, 0));
+           strip.SetPixelColor(1, RgbColor(0, 0, 0));
+           strip.SetPixelColor(2, RgbColor(brightnessIdleTop, brightnessIdleTop, brightnessIdleTop));
+           strip.SetPixelColor(3, RgbColor(0, 0, 0));
+           strip.Show();
+        }
+        else if (ledCounter == 15 * multi)
+        {
+           strip.SetPixelColor(0, RgbColor(0, 0, 0));
+           strip.SetPixelColor(1, RgbColor(0, 0, 0));
+           strip.SetPixelColor(2, RgbColor(0, 0, 0));
+           strip.SetPixelColor(3, RgbColor(brightnessIdleTop, brightnessIdleTop, brightnessIdleTop));
+           strip.Show();
+        }
+        else if (ledCounter > 20 * multi)
+        {
+            ledCounter = 0;
+        }
+        /*if (ledCounter < 1 * multi)
+        {
+           float s = ((float)ledCounter) / multi;
+           int val = (s * brightnessIdleTop);
+
+           strip.SetPixelColor(0, RgbColor(val, val, val));
+           strip.SetPixelColor(1, RgbColor(val, val, val));
+           strip.SetPixelColor(2, RgbColor(val, val, val));
+           strip.SetPixelColor(3, RgbColor(brightnessIdleTop - val, brightnessIdleTop - val, brightnessIdleTop - val));
+        }
+        else if (ledCounter < 5 * multi)
+        {
+           strip.SetPixelColor(0, RgbColor(brightnessIdleTop, brightnessIdleTop, brightnessIdleTop));
+           strip.SetPixelColor(1, RgbColor(brightnessIdleTop, brightnessIdleTop, brightnessIdleTop));
+           strip.SetPixelColor(2, RgbColor(brightnessIdleTop, brightnessIdleTop, brightnessIdleTop));
+           strip.SetPixelColor(3, RgbColor(0, 0, 0));
+        }
+        else if (ledCounter < 6 * multi)
+        {
+           float s = ((float)(ledCounter - 5 * multi)) / multi;
+           int val = (s * brightnessIdleTop);
+
+           strip.SetPixelColor(0, RgbColor(brightnessIdleTop - val, brightnessIdleTop - val, brightnessIdleTop - val));
+           strip.SetPixelColor(1, RgbColor(brightnessIdleTop - val, brightnessIdleTop - val, brightnessIdleTop - val));
+           strip.SetPixelColor(2, RgbColor(brightnessIdleTop - val, brightnessIdleTop - val, brightnessIdleTop - val));
+           strip.SetPixelColor(3, RgbColor(val, val, val));
+        }
+        else if (ledCounter < 10 * multi)
+        {
+           strip.SetPixelColor(0, RgbColor(0, 0, 0));
+           strip.SetPixelColor(1, RgbColor(0, 0, 0));
+           strip.SetPixelColor(2, RgbColor(0, 0, 0));
+           strip.SetPixelColor(3, RgbColor(brightnessIdleTop, brightnessIdleTop, brightnessIdleTop));
+        }
+        else
+        {
+            ledCounter = 0;
+        }*/
+
+        
+    }
+    else if (ledMode == 1)
+    {
+        if (ledModeIntern == 0)
+        {
+            ledCounter++;
+            if (ledCounter == 0)
+            {
+                strip.SetPixelColor(0, RgbColor(0, 0, 0));
+                strip.SetPixelColor(1, RgbColor(0, 0, 0));
+                strip.SetPixelColor(2, RgbColor(0, 0, 0));
+                strip.SetPixelColor(3, RgbColor(0, 0, 0));
+            }
+            else if (ledCounter < 5000)
+            {
+                int val = (((float)ledCounter) / 5000) * brightnessIdle;
+                
+                strip.SetPixelColor(0, RgbColor(val, val, val));
+                strip.SetPixelColor(1, RgbColor(val, val, val));
+            }
+            else if (ledCounter < 5000 + 2000)
+            {
+                int val = (((float)ledCounter - 5000) / 2000) * brightnessIdleTop;
+                
+                strip.SetPixelColor(2, RgbColor(val, val, val));
+            }
+            else
+            {
+                ledModeIntern = 1;
+                ledCounter = 0;
+                ledGlobalCounter = 0;
+                strip.SetPixelColor(0, RgbColor(brightnessIdle, brightnessIdle, brightnessIdle));
+                strip.SetPixelColor(1, RgbColor(brightnessIdle, brightnessIdle, brightnessIdle));
+                strip.SetPixelColor(2, RgbColor(brightnessIdleTop, brightnessIdleTop, brightnessIdleTop));
+            }
+            strip.SetPixelColor(3, RgbColor(0, 0, 0));
+        }
+        else if (ledModeIntern == 1)
+        {
+            int multi = 2000;
+            ledCounter++;
+        
+            strip.SetPixelColor(0, RgbColor(brightnessIdle, brightnessIdle, brightnessIdle));
+            strip.SetPixelColor(1, RgbColor(brightnessIdle, brightnessIdle, brightnessIdle));
+            
+            if (ledCounter == 0)
+            {
+            
+                strip.SetPixelColor(2, RgbColor(brightnessIdleTop, brightnessIdleTop, brightnessIdleTop));
+                strip.SetPixelColor(3, RgbColor(0, 0, 0));
+            }
+            if (ledCounter < 1 * multi)
+            {
+               float s = ((float)ledCounter) / multi;
+               int val = (s * brightnessIdleTop);
+            
+               strip.SetPixelColor(2, RgbColor(brightnessIdleTop - val, brightnessIdleTop - val, brightnessIdleTop - val));
+               strip.SetPixelColor(3, RgbColor(val, val, val));
+            }
+            else if (ledCounter < 2 * multi)
+            {
+                float s = ((float)(ledCounter - 1 * multi)) / multi;
+                int val = (s * brightnessIdleTop);
+            
+                strip.SetPixelColor(2, RgbColor(val, val, val));
+                strip.SetPixelColor(3, RgbColor(brightnessIdleTop - val, brightnessIdleTop - val, brightnessIdleTop - val));
+            }
+            else
+            {
+                ledCounter = 0;
+            ledGlobalCounter++;
+            }
+            
+            if ((ledGlobalCounter) > 14 && ledCounter == 0)
+            {
+                ledModeIntern = 2;
+                ledCounter = 0;
+            }
+        }
+        else if (ledModeIntern == 2)
+        {
+            ledCounter++;
+            
+            strip.SetPixelColor(3, RgbColor(0, 0, 0));
+            if (ledCounter < 2000)
+            {
+                int val = (((float)ledCounter) / 2000) * brightnessIdleTop;
+                
+                strip.SetPixelColor(2, RgbColor(brightnessIdleTop - val, brightnessIdleTop - val, brightnessIdleTop - val));
+            }
+            else if (ledCounter < 8000 + 2000)
+            {
+                int val = (((float)ledCounter - 2000) / 8000) * brightnessIdle;
+                
+                strip.SetPixelColor(0, RgbColor(brightnessIdle - val, brightnessIdle - val, brightnessIdle - val));
+                strip.SetPixelColor(1, RgbColor(brightnessIdle - val, brightnessIdle - val, brightnessIdle - val));
+                strip.SetPixelColor(2, RgbColor(0, 0, 0));
+                strip.SetPixelColor(3, RgbColor(0, 0, 0));
+            }
+            else
+            {
+                ledMode = 0;
+                ledGlobalCounter = 0;
+                ledModeIntern = 0;
+                ledCounter = 0;
+                strip.SetPixelColor(0, RgbColor(0, 0, 0));
+                strip.SetPixelColor(1, RgbColor(0, 0, 0));
+                strip.SetPixelColor(2, RgbColor(0, 0, 0));
+                strip.SetPixelColor(3, RgbColor(0, 0, 0));
+            }
+        }
+
+
+
+        
+        
+        strip.Show();
+    }
+
+
+
+
 
 
 
@@ -573,12 +813,13 @@ if (digitalRead(30)==LOW && lift1 ) //Button 1 Pressed
 {
     pressTime = 0;
     lift1 = false;
-    Button1Press();
+    Button1Lift();
 }
 else if (digitalRead(30)!=LOW && lift1 == false)
 {
     waitForPresstime = false;
     lift1 = true;
+    Button1Press();
 }
 
 
@@ -586,7 +827,6 @@ if (digitalRead(31)==LOW && lift2 )
 {
     pressTime = 0;
     lift2 = false;
-    Button2Press();
   
 
 }
@@ -594,54 +834,55 @@ else if (digitalRead(31)!=LOW && lift2 == false)
 {
     waitForPresstime = false;
     lift2 = true;
+    Button2Press();
 }
 
 if (digitalRead(32)==LOW && lift3 )
 {
-    pressTime = 0;
+    waitForPresstime = false;
     lift3 = false;
-    Button3Press();
 }
 else if (digitalRead(32)!=LOW && lift3 == false)
 {
-    waitForPresstime = false;
+    pressTime = 0;
     lift3 = true;
+    Button3Press();
 }
 
 if (digitalRead(33)==LOW && lift4 )
 {
     pressTime = 0;
     lift4 = false;
-    Button4Press();
 }
 else if (digitalRead(33)!=LOW && lift4 == false)
 {
     waitForPresstime = false;
     lift4 = true;
+    Button4Press();
 }
 
 if (digitalRead(34)==LOW && lift5 )
 {
     pressTime = 0;
     lift5 = false;
-    Button5Press();
 }
 else if (digitalRead(34)!=LOW && lift5 == false)
 {
     waitForPresstime = false;
     lift5 = true;
+    Button6Press();
 }
 
 if (digitalRead(35)==LOW && lift6 )
 {
     pressTime = 0;
     lift6 = false;
-    Button6Press();
 }
 else if (digitalRead(35)!=LOW && lift6 == false)
 {
     waitForPresstime = false;
     lift6 = true;
+    Button5Press();
 }
 
 }
@@ -674,11 +915,37 @@ void Button1Press()
     //music.setVolume(volumeNow);
 
 
+    //TEMP TODO
+    //if (alarmState == 0)
+    alarmState = 2;
+    //else
+    //alarmState = 0;
+
+    if (alarmState == 0)
+    {
+        alarmStop();
+    }
+
+    //state = 3;
+    displayTextEnd = random(2);// Alarm text amounts
+    
+}
+
+
+void Button1Lift()
+{
+    counter = 0;
+    volumeNow++;
+    if (volumeNow > 6)
+    volumeNow = 6;
+  
+    //music.setVolume(volumeNow);
+
 
     //TEMP TODO
-    if (alarmState == 0)
-    alarmState = 2;
-    else
+    //if (alarmState == 0)
+    //alarmState = 2;
+    //else
     alarmState = 0;
 
     if (alarmState == 0)
@@ -697,7 +964,36 @@ void Button2Press()
     if (volumeNow < 1)
     volumeNow = 1;
 
-    alarmStop();
+
+
+    
+
+    if (alarmState == 2)
+    {
+
+        if (alarmRinging)
+        {
+            alarmMinute += 5;
+            if (alarmMinute >= 60)
+            {
+                alarmMinute = alarmMinute - 60;
+                alarmHour++;
+                if (alarmHour >= 24)
+                {
+                    alarmHour = 0;
+                }
+            }
+        }
+        alarmStop();
+        
+        alarmState = 2;
+    }
+
+
+    
+    
+
+    ledMode = 1;
 
     //music.setVolume(volumeNow);
     
@@ -777,7 +1073,7 @@ void Button5Press()
             alarmHour--;
             if (alarmHour < 0)
             {
-                alarmHour = 24;
+                alarmHour = 23;
             }
         }
         else if (setAlarmState == 1)
@@ -785,7 +1081,7 @@ void Button5Press()
             alarmMinute--;
             if (alarmMinute < 0)
             {
-                alarmMinute = 60;
+                alarmMinute = 59;
             }
         }
     }
@@ -818,7 +1114,7 @@ void Button5Press()
             sHour--;
             if (sHour < 0)
             {
-                sHour = 24;
+                sHour = 23;
             }
         }
         else if (setTimeState == 4)
@@ -826,7 +1122,7 @@ void Button5Press()
             sMinute--;
             if (sMinute < 0)
             {
-                sMinute = 60;
+                sMinute = 59;
             }
         }
     }
@@ -841,12 +1137,12 @@ void Button6Press()
         if (setAlarmState == 0)
         {
             alarmHour++;
-            alarmHour = alarmHour % 25;
+            alarmHour = alarmHour % 24;
         }
         else if (setAlarmState == 1)
         {
             alarmMinute++;
-            alarmMinute = alarmMinute % 61;
+            alarmMinute = alarmMinute % 60;
         }
     }
 
@@ -870,12 +1166,12 @@ void Button6Press()
         else if (setTimeState == 3)
         {
             sHour++;
-            sHour = sHour % 25;
+            sHour = sHour % 24;
         }
         else if (setTimeState == 4)
         {
             sMinute++;
-            sHour = sHour % 61;
+            sHour = sHour % 60;
         }
     }
 }

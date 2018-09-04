@@ -20,7 +20,7 @@
   When using 8bit and 16bit display modules there are some 
   requirements you must adhere to. These requirements can be found 
   in the document UTFT_Requirements.pdf.
-  There are no special requirements when using serial displays.
+  There are no special requirements when using serdial displays.
 
   You can always find the latest version of the library at 
   http://electronics.henningkarlsen.com/
@@ -1176,10 +1176,10 @@ void UTFT::printNumF(double num, byte dec, int x, int y, char divider, int lengt
 void UTFT::setFont(uint8_t* font)
 {
 	cfont.font=font;
-	cfont.x_size=5;//fontbyte(0);
-	cfont.y_size=5;//fontbyte(1);
-	cfont.offset=1;//fontbyte(2);
-	cfont.numchars=1;//fontbyte(3);
+	cfont.x_size=font[0];//fontbyte(0);
+	cfont.y_size=font[1];//fontbyte(1);
+	cfont.offset=font[2];//fontbyte(2);
+	cfont.numchars=font[3];//fontbyte(3);
 }
 
 uint8_t* UTFT::getFont()
