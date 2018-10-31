@@ -113,6 +113,17 @@ int m_lastLapMil = 0;
 int m_lastLapMinOld = 0;
 int m_lastLapSecOld = 0;
 int m_lastLapMilOld = 0;
+int m_bestLapMin = 0;
+int m_bestLapSec = 0;
+int m_bestLapMil = 0;
+int m_bestLapMinOld = 0;
+int m_bestLapSecOld = 0;
+int m_bestLapMilOld = 0;
+
+int m_currentLap = 0;
+int m_currentLapOld = 1;
+int m_amountLaps = 0;
+int m_amountLapsOld = 0;
 
 
 
@@ -229,7 +240,35 @@ void loop()
             m_lastLapMin = receivedBytes[1];
             m_lastLapSec = receivedBytes[2];
             m_lastLapMil = (receivedBytes[3] << 8) | (receivedBytes[4]);
+            Serial.write(1);
         }
+
+        // Best Lap Time
+        else if (numReceived >= 3 && receivedBytes[0]== 4)
+        {
+            m_bestLapMin = receivedBytes[1];
+            m_bestLapSec = receivedBytes[2];
+            m_bestLapMil = (receivedBytes[3] << 8) | (receivedBytes[4]);
+            Serial.write(1);
+        }
+
+        // Current Lap
+        else if (numReceived >= 2 && receivedBytes[0] == 5)
+        {
+            m_currentLap = receivedBytes[1];
+            Serial.write(1);
+        }
+
+        // Amount Laps
+        else if (numReceived >= 2 && receivedBytes[0] == 6)
+        {
+            m_amountLaps = receivedBytes[1];
+            Serial.write(1);
+        }
+
+
+
+        
         newData = false;
     }
 
@@ -267,13 +306,20 @@ void loop()
         myGLCD.print(String(m_speed), xPos, yPos, 0); 
         m_speedOld = m_speed;
     }
-    if (m_oilTemp != m_oilTempOld)
+    if (m_oilTemp != m_oilTempOld || m_currentLap != m_currentLapOld)
     {
         myGLCD.setBackColor(0, 0, 0);
         myGLCD.setColor(0, 255, 0);
         myGLCD.setFont(BigFont);
         myGLCD.print(String(m_oilTemp), 4, 200, 0); 
         m_oilTempOld = m_oilTemp;
+
+
+        
+        myGLCD.setColor(30, 30, 255);
+        myGLCD.print("Lap", 4, 175, 0); 
+        myGLCD.print(String(m_currentLap), 64, 175, 0); 
+        m_currentLapOld = m_currentLap;
     }
     if ((m_lastLapMil != m_lastLapMilOld || m_lastLapMin != m_lastLapMinOld || m_lastLapSec != m_lastLapSecOld))
     {
