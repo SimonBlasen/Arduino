@@ -155,8 +155,8 @@ pinMode(35, INPUT_PULLUP);
 //pinMode(3, INPUT_PULLUP); //Button 2 with internal pull up to play/pause
 //pinMode(3, INPUT_PULLUP); //Button 2 with internal pull up to fast forward
 
-music.setVolume(5);    //   0 to 7. Set volume level
 music.quality(1);        //  Set 1 for 2x oversampling Set 0 for normal
+music.setVolume(5);    //   0 to 7. Set volume level
 //music.volume(0);        //   1(up) or 0(down) to control volume
 //music.play("filename",30); plays a file starting at 30 seconds into the track    
 
@@ -265,7 +265,7 @@ bool lift5 = true;
 bool lift6 = true;
 bool waitForPresstime = false;
 
-int volumeNow = 3;
+int volumeNow = 5;
 
 int counter = 0;
 
@@ -275,7 +275,7 @@ int state = 0;
 
 // Alarm
 int alarmState = 0;
-int alarmHour = 19, alarmMinute = 44;
+int alarmHour = 18, alarmMinute = 05;
 int setAlarmState = 0;
 int displayTextEnd = 0;
 int endScreenCounter = 0;
@@ -293,6 +293,7 @@ int gnTextCounter = 0;
 
 
 int dowC = 0;
+int alarmVolumeCounter = 0;
 
 bool firstStartAlarmSound = true;
 bool alarmRinging = false;
@@ -300,20 +301,21 @@ void alarmStart()
 {
     if (alarmRinging == false)
     {
+        alarmVolumeCounter = 0;
         ledMode = 2;
         digitalWrite(42, LOW);
         alarmRinging = true;
         music.setVolume(5);  
 
         music.loop(true);
-        music.play("2.wav"); //Play song 2 from 33rd second 
+        music.play("3.wav"); //Play song 2 from 33rd second 
     }
 }
 
 void alarmStop()
 {
     if (alarmRinging)
-    {
+    { 
         ledMode = 0;
         digitalWrite(42, HIGH);
         alarmState = 0;
@@ -322,9 +324,23 @@ void alarmStop()
     }
 }
 
+
 void loop()
 { 
     counter++;
+
+    if (alarmRinging)
+    {
+        alarmVolumeCounter++;
+        if (alarmVolumeCounter == 10)
+        {
+            music.setVolume(6); 
+        }
+        else if (alarmVolumeCounter == 25)
+        {
+            music.setVolume(6); 
+        }
+    }
 
     alarmCounter++;
     if (alarmCounter  >= 1000)
@@ -1062,6 +1078,16 @@ void Button4Press()
 }
 void Button5Press()
 {
+    if (alarmRinging)
+    {
+        volumeNow--;
+        if (volumeNow < 1)
+        {
+            volumeNow = 1;
+        }
+        music.setVolume(volumeNow);    //   0 to 7. Set volume level
+    }
+    
     counter = 0;
     Serial.println("Button 5");
 
@@ -1129,6 +1155,16 @@ void Button5Press()
 }
 void Button6Press()
 {
+    if (alarmRinging)
+    {
+        volumeNow++;
+        if (volumeNow > 7)
+        {
+            volumeNow = 7;
+        }
+        music.setVolume(volumeNow);    //   0 to 7. Set volume level
+    }
+    
     counter = 0;
     Serial.println("Button 6");
 
